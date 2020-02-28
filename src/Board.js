@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import './Board.css';
 import CardPile from './CardPile';
 import { v4 as uuid} from 'uuid';
@@ -20,7 +20,7 @@ function Board() {
     fetchDeck();
   }, []);
 
-  const drawCard = () => {
+  const drawCard = useCallback(() => {
     async function fetchCard() {
       const cardResult = await axios.get(
         `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
@@ -37,7 +37,7 @@ function Board() {
       }
     }
     fetchCard();
-  }
+  },[setCardsArray, setCurrentlyDrawing, deckId]);
 
   const toggleDraw = () => {
     setCurrentlyDrawing(previous => !previous);
@@ -52,7 +52,7 @@ function Board() {
         clearInterval(timerId.current);
       };
     }
-  }, [currentlyDrawing])
+  }, [drawCard, currentlyDrawing])
 
   let htmlAfterDraw = (
     <div>
